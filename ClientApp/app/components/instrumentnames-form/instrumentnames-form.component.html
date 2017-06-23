@@ -1,0 +1,32 @@
+<h2>Instrumenten-Namen</h2>
+<form>
+    <div class="form-group">
+    {{this.selectedInstrumentNameInfo}}
+    
+<p-autoComplete  name="instrumentname" [(ngModel)]="selectedInstrumentName" [suggestions]="filteredInstrumentNames" (completeMethod)="filterInstrumentNames($event)" 
+    [minLength]="1" placeholder="Nach Namen suchen" [dropdown]="true" (onBlur)="handleInstrumentNameBlur($event)"
+    (onSelect)="handleInstrumentNameSelect($event)" (onDropdownClick)="handleInstrumentNameDropdownClick($event)"
+    field="name">
+
+</p-autoComplete>
+<button pButton type="button" label="Reset" [disabled]="!this.selectedInstrumentNameId > 0"></button>
+<button pButton type="button" label="Save" [disabled]="this.selectedInstrumentNameId > 0 || this.selectedInstrumentNameInfo== undefined || this.selectedInstrumentNameInfo== ''"></button>
+</div>
+
+
+
+
+
+<div class="ui-widget-header" style="padding:4px 10px;border-bottom: 0 none">
+    <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+    <input #gb type="text" pInputText size="50" placeholder="Global Filter">
+</div>
+<p-dataTable [value]="instrumentNamesAll" [globalFilter]="gb">
+    <p-column field="name" header="Name" [sortable]=true [editable]=true></p-column>
+    <p-column field="brokerSymbol" header="Symbol" [sortable]=true ></p-column>
+    <p-column field="broker" header="Broker" [sortable]=true ></p-column>
+    <p-column field="exchange" header="Exchange" [sortable]=true ></p-column>
+    <p-column field="currency" header="Currency" [sortable]=true ></p-column>
+    <p-column field="type" header="Typ" [sortable]=true ></p-column>
+</p-dataTable>
+</form>

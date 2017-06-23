@@ -1,0 +1,65 @@
+@media (max-width: 767px) {
+    /* On small screens, the nav menu spans the full width of the screen. Leave a space for it. */
+    .body-content {
+        padding-top: 20px;
+    }
+}
+.body-content{
+    margin-top: 70px;
+}
+.row{
+    margin-right: 20px;
+    margin-left: 20px;
+}
+
+/deep/ body .ui-datatable .ui-datatable-header,
+/deep/ body .ui-datatable .ui-datatable-footer,
+/deep/ body .ui-datatable .ui-datatable-thead > tr > th,
+/deep/ body .ui-datatable .ui-datatable-tfoot > tr > td,
+/deep/ body .ui-datatable tfoot th.ui-state-default,
+/deep/ body .ui-datatable .ui-datatable-data>tr>td,
+/deep/ body .ui-datatable .ui-datatable-data>tr>td{
+    font-size: 1em;
+    padding: 0px;
+    padding-left: 3px;
+    padding-right: 3px;
+    white-space:nowrap;
+    
+}   
+/deep/ th .ui-column-title {
+    display: inline !important;
+}
+
+/deep/ .table>thead>tr>th{
+    background: #AAA;
+}
+
+/deep/ .tradebg-Dirty {background-color: #ffcccc !important;}
+/deep/ .tradebg-Closed {background-color: #f7f7f7 !important;}
+/deep/ .tradebg-Filled {background-color: #e6ffe6 !important;}
+/deep/ .tradebg-Placed {background-color: #d6e0f5 !important;}
+/deep/ .tradebg-Prepped, .tradebg-PrepCancel {background-color: #ffff66 !important;}
+
+/deep/ .tradecol-green {background-color:#5cd65c!important;}
+/deep/ .tradecol-red {background-color:#ff8566!important;}
+
+
+/deep/ .table>thead>tr>th,
+/deep/  .table>tbody>tr>th,
+/deep/  .table>tfoot>tr>th,
+/deep/  .table>thead>tr>td,
+/deep/  .table>tbody>tr>td,
+/deep/  .table>tfoot>tr>td {
+    padding: 2px;
+    white-space: nowrap;
+}
+/deep/ .table-condensed>thead>tr>th,
+/deep/  .table-condensed>tbody>tr>th,
+/deep/  .table-condensed>tfoot>tr>th,
+/deep/  .table-condensed>thead>tr>td,
+/deep/  .table-condensed>tbody>tr>td,
+/deep/  .table-condensed>tfoot>tr>td {
+    padding: 1px;
+
+}
+

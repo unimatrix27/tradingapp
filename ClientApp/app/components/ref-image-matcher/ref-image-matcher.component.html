@@ -1,0 +1,31 @@
+<form *ngIf="refImage" class="form-horizontal" [formGroup]="rForm" (ngSubmit)="save()">
+  <div>
+    <img  src="/refimages/show/{{refImage.id}}"/>
+  </div>
+  <div class="form-group  has-feedback" >
+    <p-autoComplete  formControlName="brokerInstrument" [suggestions]="filteredBrokerInstruments" 
+        placeholder="Select Broker Instrument" [dropdown]="true" 
+        (onSelect)="handleBrokerInstrumentSelect($event)" (onDropdownClick)="handleDropdownClick($event)"
+        (completeMethod)="filterBrokerInstruments($event)"
+        field="instrumentNameName">
+        <ng-template let-brand pTemplate="item">
+        <b>{{brand.instrumentNameName}}</b> <br/><small>{{brand.symbolName}}({{brand.brokerName}}) - <em>{{brand.typeName}},{{brand.currencyName}}</em></small> 
+        
+    </ng-template>
+    </p-autoComplete>
+  </div>
+    <div class="form-group">
+        <button pButton type="submit" label="Save" [disabled]="this.selectedBrokerInstrumentId == 0" ></button>
+        <button pButton type="submit" label="Skip" [disabled]="this.selectedBrokerInstrumentId !=0"></button>
+    </div>
+
+
+</form>
+RefImageId: {{this.refImageId}}
+<br />
+Selected: {{this.selectedBrokerInstrumentId}}
+<br />
+
+Remaining: {{this.unreferencedImages}}
+<br />
+Result {{this.resultRefImage.brokerInstrumentId}}

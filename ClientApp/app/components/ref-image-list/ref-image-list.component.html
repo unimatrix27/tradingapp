@@ -1,0 +1,32 @@
+<div class="ui-widget-header" style="padding:4px 10px;border-bottom: 0 none">
+    <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+    <input #gb type="text" pInputText size="50" placeholder="Global Filter">
+</div>
+<div>
+    <p-dataTable  [value]="allRefImages" [globalFilter]="gb" [resizableColumns]="true"
+       [rows]="25" [paginator]="true" [pageLinks]="5" [rowsPerPageOptions]="[25,50,100,200]">
+        <p-column  field="id" header="id" [sortable]=true></p-column>
+        <p-column  field="screenerType.name" header="Screener" [sortable]=true></p-column>
+        <p-column  field="cellColorName" header="Color" [sortable]=true>
+           <ng-template let-item="rowData" pTemplate="body">
+             <span [style.color]="item.cellColorName">{{item.cellColorName}}</span>
+           </ng-template>     
+        </p-column>
+        <p-column  field="imageSignature" header="image" [sortable]=true>
+           <ng-template let-item="rowData" pTemplate="body">
+             <img  src="/refimages/show/{{item.id}}"/>
+           </ng-template>
+        </p-column>
+        <p-column  field="brokerInstrument.instrumentNameName" header="Name" [sortable]=true [editable]=true></p-column>
+        <p-column  field="brokerInstrument.symbolName" header="Symbol" [sortable]=true></p-column>
+        <p-column  field="brokerInstrument.instrumentType.name" header="Typ" [sortable]=true></p-column>
+        <!--<p-column field="imageSignature" header="image" [sortable]=true>
+           <ng-template let-item="rowData" pTemplate="body">
+             <button type="button" pButton (click)="delete(item.id)" label="remove"></button>
+           </ng-template>
+        </p-column>-->
+
+
+
+    </p-dataTable>
+</div>

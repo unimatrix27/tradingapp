@@ -1,0 +1,439 @@
+
+
+<p-dialog focus="age" header="Ausführungskurs" [(visible)]="displayTradeFilled" modal="modal" width="300" [responsive]="true" [draggable]="true">
+    <p>{{instrumentName}}</p>
+    <input  id="age" type="number" step="0.001" [(ngModel)]="executedLevel"/>
+        <p-footer>
+            <div class="ui-dialog-buttonpane ui-widget-content ui-helper-clearfix">
+                <button type="button" pButton icon="fa-close" (click)="displayTradeFilled=false" label="Doch nicht"></button>
+                <button type="button" pButton icon="fa-check" (click)="tradeFilled2()" label="Bestätigen"></button>
+            </div>
+        </p-footer>
+</p-dialog>
+
+
+
+<div>
+
+    <div class="ui-widget-header" style="padding:4px 10px;border-bottom: 0 none">
+    <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
+    <input #gb type="text" pInputText size="50" placeholder="Trades filtern..."> Offener PnL {{gesamtPnL| number : '1.2-2'}} - DAX: {{dax}} - M-DAX: {{mdax}} - DOW: {{dow}}
+    </div>
+    <p-dataTable [rowStyleClass]= "highlightRow" scrollable="true" scrollHeight="600px" [rowExpandMode]="single" [rowHover]="true" [value]="trades" [globalFilter]="gb" expandableRows="true" #dt  [editable]="false"  (onRowClick)="dt.toggleRow($event.data)">
+        <p-column  field="id" header="Id" [style]="{'width':'40px'}"></p-column>
+        <p-column  field="tradeSteps[item.tradeSteps.length -1].created" [sortable]=true header="Changed" [style]="{'width':'150px'}">
+             <ng-template let-item="rowData" pTemplate="body" >
+                 {{item.tradeSteps[item.tradeSteps.length -1].created.calendar()}}
+            </ng-template>  
+         </p-column>
+        <p-column  field="type" header="Typ" [sortable]=true [style]="{'width':'60px'}">
+            <ng-template let-item="rowData" pTemplate="body" >
+             {{st[item.signal.signalType]}}
+           </ng-template>   
+        </p-column>
+        <p-column  field="signal.tradeDirection" header="Rtg" [sortable]=true  [style]="{'width':'50px'}">
+            <ng-template let-item="rowData" pTemplate="body">
+             {{td[item.signal.tradeDirection]}}
+           </ng-template>   
+        </p-column>
+        <p-column  field="signal.instrument.screener" header="Screener" [sortable]=true [style]="{'width':'70px'}"></p-column>
+        <p-column  field="signal.instrument.name" header="Instrument" [sortable]=true [style]="{'width':'190px'}"></p-column>
+        <p-column  field="signal.instrument.brokerSymbol" header="Symbol" [sortable]=true [style]="{'width':'60px'}"></p-column>
+        <p-column  field="type" header="Status" [sortable]=true  [style]="{'width':'120px'}">
+            <ng-template let-item="rowData" pTemplate="body">
+             {{tst[item.type]}}
+           </ng-template> 
+        </p-column>
+        <p-column  field="size" header="Size" [sortable]=true  [style]="{'text-align':'right','width':'50px'}">
+            <ng-template let-item="rowData" pTemplate="body">
+             <span style="font-weight:bold" #y>{{ getFgColor(y,item) }}{{item.size}}</span>
+           </ng-template> 
+        </p-column>
+        <p-column  field="entry" header="Entry" [style]="{'text-align':'right','width':'50px'}" [editable]="false">
+            <ng-template let-item="rowData" pTemplate="body">
+             {{item.entry | number : '1.2-2'}}
+           </ng-template> 
+           <ng-template let-item="rowData" pTemplate="editor">
+             <input type="text" [(ngModel)]="item.tradeSteps[item.tradeSteps.length -1].entryLevel"/>
+           </ng-template>
+        </p-column>
+        <p-column  field="stop" header="Stop"  [style]="{'text-align':'right','width':'50px'}" [editable]="false" >
+            <ng-template let-item="rowData" pTemplate="body">
+             {{item.stop| number : '1.2-2'}}
+           </ng-template> 
+        </p-column>
+        <p-column  field="profit" header="TP"  [style]="{'text-align':'right','width':'50px'}" [editable]="false">
+            <ng-template let-item="rowData" pTemplate="body">
+                {{item.profit| number : '1.2-2'}}
+           </ng-template> 
+        </p-column>
+        <p-column  field="lastClose" header="Kurs"  [style]="{'text-align':'right','width':'50px'}">
+            <ng-template let-item="rowData" pTemplate="body">
+                {{item.lastClose| number : '1.2-2'}}
+           </ng-template> 
+        </p-column>
+        <p-column  field="pnL" header="PnL" [sortable]=true  [style]="{'text-align':'right','width':'80px'}">
+             <ng-template let-item="rowData" pTemplate="body">
+                     <span #x> {{ getColor(x,item) }}
+                        {{item.pnL| number : '1.2-2'}}
+                    </span>
+           </ng-template>            
+        </p-column>
+        <p-column  field="atRisk" header="atRisk" [sortable]=true  [style]="{'text-align':'right','width':'80px'}">
+             <ng-template let-item="rowData" pTemplate="body">
+                {{item.atRisk| number : '1.2-2'}}
+           </ng-template>        
+        </p-column>
+
+
+        <p-column  field="id" header="Aktionen"  [style]="{'width':'350px'}">
+            <ng-template let-item="rowData" pTemplate="body">
+                <div class="btn-group">
+
+                    <button 
+                        *ngIf="item.tradeSteps[item.tradeSteps.length -1].type == tst.Placed
+                           ||item.tradeSteps[item.tradeSteps.length -1].type == tst.PlacedOld "
+                        type="button" class="btn btn-primary  btn-xs" (click)="tradeFilled(item)">Ausgeführt</button>
+
+
+ 
+                    <button 
+                        *ngIf="item.tradeSteps[item.tradeSteps.length -1].type == tst.Prepped
+                            ||item.tradeSteps[item.tradeSteps.length -1].type == tst.PrepChange
+                            ||item.tradeSteps[item.tradeSteps.length -1].type == tst.PrepCancel"
+                        type="button" class="btn btn-success  btn-xs" (click)="tradeConfirm(item)">Eingabe OK</button>
+
+                    <button 
+                        *ngIf="item.signalState==1"
+                        type="button" class="btn btn-danger  btn-xs"(click)="tradeChange(item)">Signal-Änderung</button>
+
+
+                    <button 
+                        *ngIf="item.signalState==-1"
+                        type="button" class="btn btn-danger  btn-xs"(click)="tradeCancel(item)">Signal-Abbruch</button>
+
+                    <button 
+                        *ngIf="item.tradeSteps[item.tradeSteps.length -1].type == tst.Filled"
+                        type="button" class="btn btn-info  btn-xs"(click)="tradeTgs(item)">TGS</button>
+
+                    <button 
+                        *ngIf="item.tradeSteps[item.tradeSteps.length -1].type == tst.Filled
+                         || item.tradeSteps[item.tradeSteps.length -1].type == tst.TGS"
+                        type="button" class="btn btn-primary  btn-xs"(click)="tradeFilled(item)">Schliessen</button>
+
+                     <button 
+                        *ngIf="item.tradeSteps[item.tradeSteps.length -1].type == tst.Cancel
+                            ||item.tradeSteps[item.tradeSteps.length -1].type == tst.Closed"
+                        type="button" class="btn btn-default  btn-xs" (click)="tradeHide(item)">Ausblenden</button>
+
+                    <button 
+                        *ngIf="item.tradeSteps[item.tradeSteps.length -1].type == tst.Prepped
+                            ||item.tradeSteps[item.tradeSteps.length -1].type == tst.PrepChange
+                            ||item.tradeSteps[item.tradeSteps.length -1].type == tst.Placed
+                            ||item.tradeSteps[item.tradeSteps.length -1].type == tst.PlacedOld"
+                        type="button" class="btn  btn-xs btn-warning" (click)="tradeCancel(item)">Trade-Abbruch</button>
+
+                     <button 
+                        *ngIf="item.tradeSteps[item.tradeSteps.length -1].type == tst.PrepCancel
+                            ||item.tradeSteps[item.tradeSteps.length -1].type == tst.PrepChange"
+                        type="button" class="btn btn-link  btn-xs" (click)="tradeUndo(item)">Rückgängig</button>
+
+                </div>
+
+            </ng-template> 
+        </p-column>
+
+        <ng-template let-item pTemplate="rowexpansion">
+            <div class="ui-grid ui-grid-responsive ui-fluid">
+
+                        <hr style="margin:5px;border:solid grey 1px;">
+
+                 <div class="ui-grid-row">
+                    <div class="ui-g-12 ui-md-1">Order</div>
+                    <div class="ui-g-12 ui-md-11 ui-g-nopad"> 
+
+                        <p-dataTable  [value]="item.orders">
+                            <p-column  field="dir" header="Typ">
+                                <ng-template let-detail="rowData" pTemplate="body">
+                                     {{td[detail.direction]}}
+                                </ng-template> 
+                            </p-column>
+                            <p-column  field="Function" header="Funktion">
+                                <ng-template let-detail="rowData" pTemplate="body">
+                                     {{of[detail.function]}}
+                                </ng-template> 
+                            </p-column>
+                            <p-column  field="type" header="Typ">
+                                <ng-template let-detail="rowData" pTemplate="body">
+                                     {{ot[detail.type]}}
+                                </ng-template> 
+                            </p-column>
+                            <p-column  field="status" header="Status">
+                                <ng-template let-detail="rowData" pTemplate="body">
+                                     {{os[detail.state]}}
+                                </ng-template> 
+                            </p-column>
+                            <p-column  field="size" header="Size"></p-column>
+                            <p-column  field="limit" header="LimitLevel">
+                                <ng-template let-detail="rowData" pTemplate="body">
+                                     {{detail.limitLevel| number : '1.2-2'}}
+                                </ng-template> 
+                            </p-column>
+                            <p-column  field="stop" header="StopLevel">
+                                <ng-template let-detail="rowData" pTemplate="body">
+                                     {{detail.stopLevel| number : '1.2-2'}}
+                                </ng-template> 
+                            </p-column>
+                            <p-column  field="Exec" header="ExecLevel">
+                                <ng-template let-detail="rowData" pTemplate="body">
+                                     {{detail.executedLevel| number : '1.2-2'}}
+                                </ng-template> 
+                            </p-column>
+                            <p-column  field="Exec" header="Kosten">
+                                <ng-template let-detail="rowData" pTemplate="body">
+                                     {{detail.costs| number : '1.2-2'}}
+                                </ng-template> 
+                            </p-column>
+                            <p-column  field="valid" header="Gültig ab">
+                                <ng-template let-detail="rowData" pTemplate="body">
+                                     {{detail.ValidAfter| number : '1.2-2'}}
+                                </ng-template> 
+                            </p-column>
+                        </p-dataTable>
+                    </div>
+                </div>
+                    <hr style="margin:5px;border:solid grey 1px;">
+                 <div class="ui-grid-row">
+                    <div class="ui-g-12 ui-md-1">Tradehistorie</div>
+                    <div class="ui-g-12 ui-md-11 ui-g-nopad"> 
+                        <p-dataTable  [value]="item.tradeSteps">
+                            <p-column  field="time" header="Zeit">
+                                <ng-template let-detail="rowData" pTemplate="body">
+                                     {{detail.created.calendar()}}
+                                </ng-template> 
+                            </p-column>
+                            <p-column  field="detail.type" header="Typ">
+                                <ng-template let-detail="rowData" pTemplate="body">
+                                     {{tst[detail.type]}}
+                                </ng-template> 
+                            </p-column>
+                            <p-column  field="result" header="Status">
+                                <ng-template let-detail="rowData" pTemplate="body">
+                                     {{tsr[detail.result]}}
+                                </ng-template> 
+                            </p-column>
+                            <p-column  field="size" header="Size"></p-column>
+                            <p-column  field="entryLevel" header="Entry">
+                                <ng-template let-detail="rowData" pTemplate="body">
+                                     {{detail.entryLevel| number : '1.2-2'}}
+                                </ng-template> 
+                            </p-column>
+                            <p-column  field="stopLevel" header="SL">
+                                <ng-template let-detail="rowData" pTemplate="body">
+                                     {{detail.stopLevel| number : '1.2-2'}}
+                                </ng-template> 
+                            </p-column>
+                            <p-column  field="profitLevel" header="TP">
+                                <ng-template let-detail="rowData" pTemplate="body">
+                                     {{detail.profitLevel| number : '1.2-2'}}
+                                </ng-template> 
+                            </p-column>
+                        </p-dataTable>
+                    </div>
+                </div>
+                                                    <hr style="margin:5px;border:solid grey 1px;">
+                <div class="ui-grid-row">
+                    <div class="ui-g-12 ui-md-1">Signalhistorie</div>
+                    <div class="ui-g-12 ui-md-11 ui-g-nopad"> 
+                        <p-dataTable  [value]="item.signal.signalSteps">
+                             <p-column  field="id" header="Id" [sortable]=true></p-column>
+                            <p-column  field="detail.priceEntry.TimeStamp" header="Zeit">
+                                <ng-template let-detail="rowData" pTemplate="body">
+                                     {{detail.priceEntry.timeStamp.calendar()}}
+                                </ng-template> 
+                            </p-column>
+                            <p-column  field="type" header="Typ">
+                                <ng-template let-detail="rowData" pTemplate="body">
+                                     {{sst[detail.signalStepType]}}
+                                </ng-template> 
+                            </p-column>
+                            <p-column  field="high" header="Hoch">
+                                <ng-template let-detail="rowData" pTemplate="body">
+                                     {{detail.priceEntry.high| number : '1.2-2'}}
+                                </ng-template> 
+                            </p-column>
+                            <p-column  field="low" header="Tief">
+                                <ng-template let-detail="rowData" pTemplate="body">
+                                     {{detail.priceEntry.low| number : '1.2-2'}}
+                                </ng-template> 
+                            </p-column>
+                            <p-column  field="entry" header="Entry">
+                                <ng-template let-detail="rowData" pTemplate="body">
+                                     {{detail.entry| number : '1.2-2'}}
+                                </ng-template> 
+                            </p-column>
+                            <p-column  field="stop" header="Stop">
+                                <ng-template let-detail="rowData" pTemplate="body">
+                                     {{detail.sl| number : '1.2-2'}}
+                                </ng-template> 
+                            </p-column>
+                            <p-column  field="stop" header="TP">
+                                <ng-template let-detail="rowData" pTemplate="body">
+                                     {{detail.tp| number : '1.2-2'}}
+                                </ng-template> 
+                            </p-column>
+                            <p-column  field="reason" header="Grund"></p-column>
+
+                        </p-dataTable>
+                    </div>
+                </div>
+ <hr style="margin:10px;border:solid black 2px;">
+             </div>
+    </ng-template>
+       
+        <!--<p-column field="imageSignature" header="image" [sortable]=true>
+           <ng-template let-item="rowData" pTemplate="body">
+             <button type="button" pButton (click)="delete(item.id)" label="remove"></button>
+           </ng-template>
+        </p-column>-->
+    </p-dataTable>
+</div>
+
+<div>
+
+<h2>Signale</h2>
+
+    <p-dataTable   [value]="signals" [globalFilter]="gb" expandableRows="true" #dt2  [editable]="false">
+        <p-column  field="id" header="Aktionen" expander="true"></p-column>
+        <p-column  field="lastTime" header="Updated" [sortable]=true>
+            <ng-template let-item="rowData" pTemplate="body">
+             {{item.lastTime.calendar()}}
+           </ng-template>   
+        </p-column>
+        <p-column  field="type" header="Typ" [sortable]=true>
+            <ng-template let-item="rowData" pTemplate="body">
+             {{st[item.signalType]}}
+           </ng-template>   
+        </p-column>
+        <p-column  field="td" header="Rtg" [sortable]=true  >
+            <ng-template let-item="rowData" pTemplate="body">
+             {{td[item.tradeDirection]}}
+           </ng-template>   
+        </p-column>
+        <p-column  field="scr" header="Screener" [sortable]=true>
+            <ng-template let-item="rowData" pTemplate="body">
+             {{item.instrument.screener}}
+           </ng-template>  
+        </p-column>
+        <p-column  field="instrument.name" header="Instrument" [sortable]=true>
+            <ng-template let-item="rowData" pTemplate="body">
+             {{item.instrument.id}} {{item.instrument.name}}
+           </ng-template>        
+        </p-column>
+        <p-column  field="state" header="Status" [sortable]=true>
+            <ng-template let-item="rowData" pTemplate="body">
+             {{sst[item.signalSteps[item.signalSteps.length -1].type]}}
+           </ng-template> 
+        </p-column>
+        <p-column  field="entry" header="Entry" [style]="{'text-align':'right'}" [editable]="false">
+            <ng-template let-item="rowData" pTemplate="body">
+             {{item.entry | number : '1.2-2'}}
+           </ng-template> 
+        </p-column>
+        <p-column  field="id" header="Stop"  [style]="{'text-align':'right'}" [editable]="false" >
+            <ng-template let-item="rowData" pTemplate="body">
+             {{item.stop| number : '1.2-2'}}
+           </ng-template>   
+        </p-column>
+        <p-column  field="id" header="TP"  [style]="{'text-align':'right'}" [editable]="false">
+            <ng-template let-item="rowData" pTemplate="body">
+             {{item.Profit| number : '1.2-2'}}
+           </ng-template> 
+        </p-column>
+        <p-column  field="signal.instrument.lastPriceEntry.close" header="Kurs"  [style]="{'text-align':'right'}">
+            <ng-template let-item="rowData" pTemplate="body">
+             {{item.instrument.lastPriceEntry.close| number : '1.2-2'}}
+           </ng-template> 
+        </p-column>
+        <p-column  field="id" header="Aktionen"  [style]="{'width':'350px'}">
+            <ng-template let-item="rowData" pTemplate="body">
+                <div class="btn-group">
+
+                   
+
+                    <button 
+                        type="button" class="btn btn-success btn-xs"(click)="signalTrade(item)">Trade Starten</button>
+
+                    <button 
+                        type="button" class="btn btn-warning  btn-xs"(click)="signalDiscard(item)">Verwerfen</button>
+
+
+                </div>
+
+            </ng-template> 
+        </p-column>
+
+        
+
+
+
+        <ng-template let-item pTemplate="rowexpansion">
+            <div class="ui-grid ui-grid-responsive ui-fluid">
+                <div class="ui-grid-row">
+                    <div class="ui-g-12 ui-md-1">Historie</div>
+                    <div class="ui-g-12 ui-md-11 ui-g-nopad"> 
+                        <p-dataTable  [value]="item.signalSteps">
+                            <p-column  field="detail.priceEntry.TimeStamp" header="Zeit">
+                                <ng-template let-detail="rowData" pTemplate="body">
+                                     {{detail.priceEntry.timeStamp.calendar()}}
+                                </ng-template>
+                            </p-column>
+                            <p-column  field="type" header="Typ">
+                                <ng-template let-detail="rowData" pTemplate="body">
+                                     {{sst[detail.signalStepType]}}
+                                </ng-template> 
+                            </p-column>
+                            <p-column  field="high" header="Hoch">
+                                <ng-template let-detail="rowData" pTemplate="body">
+                                     {{detail.priceEntry.high| number : '1.2-2'}}
+                                </ng-template> 
+                            </p-column>
+                            <p-column  field="low" header="Tief">
+                                <ng-template let-detail="rowData" pTemplate="body">
+                                     {{detail.priceEntry.low| number : '1.2-2'}}
+                                </ng-template> 
+                            </p-column>
+                            <p-column  field="entry" header="Entry">
+                                <ng-template let-detail="rowData" pTemplate="body">
+                                     {{detail.entry| number : '1.2-2'}}
+                                </ng-template> 
+                            </p-column>
+                            <p-column  field="stop" header="Stop">
+                                <ng-template let-detail="rowData" pTemplate="body">
+                                     {{detail.sl| number : '1.2-2'}}
+                                </ng-template> 
+                            </p-column>
+                            <p-column  field="stop" header="Stop">
+                                <ng-template let-detail="rowData" pTemplate="body">
+                                     {{detail.tp| number : '1.2-2'}}
+                                </ng-template> 
+                            </p-column>
+                            <p-column  field="reason" header="Grund"></p-column>
+
+                        </p-dataTable>
+                    </div>
+                </div>
+
+                 
+
+             </div>
+    </ng-template>
+       
+        <!--<p-column field="imageSignature" header="image" [sortable]=true>
+           <ng-template let-item="rowData" pTemplate="body">
+             <button type="button" pButton (click)="delete(item.id)" label="remove"></button>
+           </ng-template>
+        </p-column>-->
+    </p-dataTable>
+
+</div>

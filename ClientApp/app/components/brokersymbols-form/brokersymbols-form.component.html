@@ -1,0 +1,42 @@
+<h2>Symbole</h2>
+<form>
+
+  <!--<div class="form-group">
+    <label for="instrumentname">Instrumenten-Name</label>
+    <select id="instrumentname" class="form-control">
+      <option value=""></option>
+      <option *ngFor="let i of instrumentNames" value="{{i.id}}">{{i.name}}</option>
+    </select>
+  </div>-->
+<div class="form-group">
+  <p-autoComplete [(ngModel)]="brand" [suggestions]="exchanges" name="xx">
+    <ng-template let-brand pTemplate="item">
+        <div class="ui-helper-clearfix" style="border-bottom:1px solid #D5D5D5">
+            
+            <div style="font-size:18px;float:right;margin:10px 10px 0 0">{{brand.nam}}</div>
+        </div>
+    </ng-template>
+</p-autoComplete>
+</div>
+
+  <div class="form-group">
+    <label for="symbolname">Symbol-Name</label>
+    <input type="text" class="form-control" id="symbolname" />
+  </div>
+  <div class="form-group">
+    <label for="exchange">Exchange</label>
+    <select id="exchange" class="form-control">
+      <option value=""></option>
+      <option *ngFor="let i of exchanges" value="{{i.id}}">{{i.name}}</option>
+    </select>
+  </div>
+
+  <p-checkbox name="groupname" value="val1" [(ngModel)]="selectedValues"></p-checkbox>
+  <p-checkbox name="groupname" value="val2" [(ngModel)]="selectedValues"></p-checkbox>
+ <!--   <div class="form-group">
+       <label for="test">Symbol-Name</label>
+   <input auto-complete id="test"/>
+   </div> -->
+</form>
+
+
