@@ -18,7 +18,7 @@ namespace trading.Persistence
 
          protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("server=192.168.2.91; database=trading3;user id=unimatrix;password=lt5kee;MultipleActiveResultSets=true");
+            optionsBuilder.UseSqlServer("server=192.168.2.91; database=devel;user id=unimatrix;password=lt5kee;MultipleActiveResultSets=true");
         }
         public DbSet<InstrumentName> InstrumentNames {get;set;}
         public DbSet<Broker> Brokers {get;set;}
