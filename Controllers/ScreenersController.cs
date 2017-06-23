@@ -39,7 +39,8 @@ namespace trading.Controllers
             var types = context.Screeners.Select(x => x.ScreenerTypeId).Distinct();
             List<Screener> result = new List<Screener>();
             foreach (var type in types){
-                var screener = context.Screeners.Include(x => x.ScreenerType).OrderByDescending(x => x.TimeStamp).FirstOrDefault(x => x.ScreenerTypeId == type);
+                var screener = context.Screeners.Include(x => x.ScreenerType)
+                    .OrderByDescending(x => x.TimeStamp).FirstOrDefault(x => x.ScreenerTypeId == type && x.IsProcessed == true);
                 result.Add(screener);
             }
             return result;
