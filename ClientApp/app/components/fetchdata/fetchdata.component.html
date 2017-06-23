@@ -19,7 +19,7 @@
     <i class="fa fa-search" style="margin:4px 4px 0 0"></i>
     <input #gb type="text" pInputText size="50" placeholder="Trades filtern..."> Offener PnL {{gesamtPnL| number : '1.2-2'}} - DAX: {{dax}} - M-DAX: {{mdax}} - DOW: {{dow}}
     </div>
-    <p-dataTable [rowStyleClass]= "highlightRow" scrollable="true" scrollHeight="600px" [rowExpandMode]="single" [rowHover]="true" [value]="trades" [globalFilter]="gb" expandableRows="true" #dt  [editable]="false"  (onRowClick)="dt.toggleRow($event.data)">
+    <p-dataTable [rowStyleClass]= "highlightRow"  [rowExpandMode]="single" [rowHover]="true" [value]="trades" [globalFilter]="gb" expandableRows="true" #dt  [editable]="false"  (onRowClick)="dt.toggleRow($event.data)">
         <p-column  field="id" header="Id" [style]="{'width':'40px'}"></p-column>
         <p-column  field="tradeSteps[item.tradeSteps.length -1].created" [sortable]=true header="Changed" [style]="{'width':'150px'}">
              <ng-template let-item="rowData" pTemplate="body" >
