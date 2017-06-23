@@ -1,6 +1,11 @@
 using Hangfire;
 using Trading.Persistence.Interfaces;
 using IBApi;
+<<<<<<< Updated upstream
+=======
+using System.Threading;
+using System;
+>>>>>>> Stashed changes
 
 namespace trading.Background
 {
@@ -17,7 +22,14 @@ namespace trading.Background
         public void Start(IJobCancellationToken cancellationToken)
         {
             Connect();
+<<<<<<< Updated upstream
 
+=======
+            while(true){
+            Thread.Sleep(2000);
+            Console.WriteLine(DateTime.Now);
+            }
+>>>>>>> Stashed changes
 
         }
 
