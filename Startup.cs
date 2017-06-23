@@ -84,11 +84,11 @@ namespace WebApplicationBasic
             //loggerFactory.AddSerilog("\\\\192.168.2.2\\familie\\07_Trading\\001_Core\\Logs\\trading_{Date}.txt");
             //loggerFactory.AddDebug();
 
-            Log.Logger = new LoggerConfiguration()
-                .MinimumLevel
-                .Information()
-                .WriteTo.Seq("http://localhost:5341/")
-                .CreateLogger();
+            //Log.Logger = new LoggerConfiguration()
+            //    .MinimumLevel
+            //    .Information()
+             //   .WriteTo.Seq("http://localhost:5341/")
+            //    .CreateLogger();
 
             GlobalConfiguration.Configuration.UseActivator(new ServiceProviderJobActivator(app.ApplicationServices));
             if (env.IsDevelopment())
