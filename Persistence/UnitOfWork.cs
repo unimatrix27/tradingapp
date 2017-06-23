@@ -321,6 +321,10 @@ namespace Trading.Persistence
                         if ((i0 == CellColor.Red && i1 != CellColor.Red && w0 == CellColor.Green)
                             || (i0 == CellColor.Red && w0 == CellColor.Green && w1 != CellColor.Green))
                             newDirection = TradeDirection.Long;
+                        
+                        var r = prices.OrderByDescending(x => x.TimeStamp).Take(13).Average(x => x.High - x.Low);
+                            
+
 
                         var openICERs = openSignals.Where(x => x.BrokerInstrumentId == brokerInstrumentId && x.SignalType == SignalType.Icer);
 
@@ -397,10 +401,10 @@ namespace Trading.Persistence
                                     else
                                     {
                                         // sonst werte neu berechnen, neuer signalstep mit change
-                                        var r = price.High - price.Low;
+
                                         var entry =  openIcerSignal.TradeDirection == TradeDirection.Long
-                                                ? price.High + (Decimal)0.618 * r
-                                                : price.Low - (Decimal)0.618 * r;
+                                                ? price.Low +  r
+                                                : price.High -r;
 
                                         var signalStep = new SignalStep
                                         {
@@ -409,8 +413,8 @@ namespace Trading.Persistence
                                                 ? price.Low
                                                 : price.High,
                                             Tp = openIcerSignal.TradeDirection == TradeDirection.Long
-                                                ? entry +(Decimal)2.47 * r
-                                                : entry -(Decimal)2.47 * r,
+                                                ? price.Low + (decimal)3.47 * r
+                                                : price.High -(decimal) 3.47 * r,
                                             EntryType = EntryType.StopLimit,
                                             ExitType = ExitType.Icer1,
                                             SlType = StopLossType.Icer1,
@@ -474,16 +478,16 @@ namespace Trading.Persistence
                                 TimeIntervalId = ti.Id
                             };
 
-                            var r = price.High - price.Low;
+
                             var signalStep = new SignalStep
                             {
                                 Entry = newDirection == TradeDirection.Long
-                                    ? price.High + (Decimal)0.618 * r
-                                    : price.Low - (Decimal)0.618 * r,
+                                    ? price.Low + r
+                                    : price.High - r,
                                 Sl = newDirection == TradeDirection.Long ? price.Low : price.High,
                                 Tp = newDirection == TradeDirection.Long
-                                    ? price.High + (Decimal)0.618 * r + (Decimal)2.47 * (Decimal)1.618 * r
-                                    : price.Low - (Decimal)0.618 * r - (Decimal)2.47 * (Decimal)1.618 * r,
+                                    ? price.Low + (decimal)3.47 * r 
+                                    : price.High -  (decimal)3.47 * r,
                                 EntryType = EntryType.StopLimit,
                                 ExitType = ExitType.Icer1,
                                 PriceEntry = price,
@@ -565,7 +569,7 @@ namespace Trading.Persistence
                                 TimeIntervalId = ti.Id
                             };
 
-                            var r = price.High - price.Low;
+                            
                             var signalStep = new SignalStep
                             {
                                 Entry = price.High,
