@@ -70,6 +70,7 @@ namespace WebApplicationBasic
             services.AddDbContext<TradingDbContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:Default"]),ServiceLifetime.Transient);
             //services.AddTransient<ITransientTradingDbContext, TradingDbContext>(options => options.UseSqlServer(Configuration["ConnectionStrings:Default"]));
             services.AddTransient<IUnitOfWork,UnitOfWork>();
+            services.AddSingleton<IbConnector>();
             // Add framework services.
             services.AddMvc().AddJsonOptions(
                 options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
@@ -109,10 +110,11 @@ namespace WebApplicationBasic
             app.UseHangfireDashboard();
 
             //BackgroundJob.Enqueue<YahooDownloader>(x => x.Download(JobCancellationToken.Null));
-            RecurringJob.AddOrUpdate<YahooDownloader>(x => x.Download(JobCancellationToken.Null), Cron.MinuteInterval(180));
-            RecurringJob.AddOrUpdate<ScreenerDownloader>(x => x.Download(JobCancellationToken.Null), Cron.MinuteInterval(15));
-            BackgroundJob.Schedule<ScreenerParseScheduler>(x => x.Schedule(JobCancellationToken.Null),TimeSpan.FromSeconds(1));
-            RecurringJob.AddOrUpdate<SignalProcessor>(x => x.ProcessAllSignals(JobCancellationToken.Null), Cron.MinuteInterval(15));
+            //RecurringJob.AddOrUpdate<YahooDownloader>(x => x.Download(JobCancellationToken.Null), Cron.MinuteInterval(180));
+            //RecurringJob.AddOrUpdate<ScreenerDownloader>(x => x.Download(JobCancellationToken.Null), Cron.MinuteInterval(15));
+            //BackgroundJob.Schedule<ScreenerParseScheduler>(x => x.Schedule(JobCancellationToken.Null),TimeSpan.FromSeconds(1));
+            //RecurringJob.AddOrUpdate<SignalProcessor>(x => x.ProcessAllSignals(JobCancellationToken.Null), Cron.MinuteInterval(15));
+            BackgroundJob.Schedule<IbConnector>(x => x.Start(JobCancellationToken.Null),TimeSpan.FromSeconds(1));
 
 
 
