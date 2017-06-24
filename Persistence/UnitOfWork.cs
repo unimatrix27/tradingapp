@@ -326,7 +326,7 @@ namespace Trading.Persistence
                             
 
 
-                        var openICERs = openSignals.Where(x => x.BrokerInstrumentId == brokerInstrumentId && x.SignalType == SignalType.Icer);
+                        var openICERs = openSignals.Where(x => x.BrokerInstrumentId == brokerInstrumentId && x.SignalType == SignalType.uxIcer);
 
                         if (openICERs.Count() > 1)
                         {
@@ -335,7 +335,7 @@ namespace Trading.Persistence
                         }
 
                         // ist schon ein laufendes signal da??  // ist schon ein laufendes signal da?? 
-                        var openIcerSignal = openICERs.FirstOrDefault(x => x.SignalType == SignalType.Icer);
+                        var openIcerSignal = openICERs.FirstOrDefault(x => x.SignalType == SignalType.uxIcer);
                         if (openIcerSignal != null)
                         {
                             var lastSignalStep = openIcerSignal.SignalSteps.OrderByDescending(x => x.Updated).First();
@@ -472,7 +472,7 @@ namespace Trading.Persistence
                                 p[0].p.TimeStamp, newDirection);
                             var signal = new Signal
                             {
-                                SignalType = SignalType.Icer,
+                                SignalType = SignalType.uxIcer,
                                 TradeDirection = (TradeDirection)newDirection,
                                 BrokerInstrumentId = brokerInstrumentId,
                                 TimeIntervalId = ti.Id
