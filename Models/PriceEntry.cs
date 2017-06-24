@@ -9,7 +9,8 @@ namespace trading.Models
     public enum SignalType
     {
         Icer,
-        uNL
+        uNL,
+        uxIcer
     }
 
     public enum TradeDirection
